@@ -24,17 +24,68 @@ const regionEl = document.getElementById("regionValue");
 const populationEl = document.getElementById("populationValue");
 const languagesEl = document.getElementById("languagesValue");
 
-       TEAM BUILD STARTS HERE
-       ============================================================ */
+/*
+ Step 1 Connect Button to click event, do not put () here as it will run without clicking!
+  */
+
+searchBtn.addEventListener("click", fetchCountry);
+
+/*
+ Step 2 Create fetchCountry()
+  */
+
+async function fetchCountry() { // Request may take time, wait for this to finish
+  const countryName = countryInput.value.trim(); // trim spaces
+
+  if(!countryName) return; // Input is nothing
+
+  showLoading();
+
+  // Build request to fetch
+  try{
+    const API_KEY = "rc_live_fdd19af75cb14647bf3cd3b62acef232";
+    const url = `https://api.restcountries.com/countries/v5?q=${countryName}`;
+    const response = await fetch(url, {
+      headers: { Authorization: `Bearer ${API_KEY}`},
+    })
+    if(!response.ok){// result is successful
+      throw new Error("Country not found.");
+    }
+    
+
+    // Converting response to JSON
+    const data = await response.json();
+    const object = data.data.objects;
+    if(!objects || object.length === 0){
+      throw new Error("Country not found");
+    }
+    const country = objects[0];
+    countryNameEl.textContent = country.names.common;
+
+    hideLoading();
+    resultCard.classList.remove("hidden");
+    errorEl.classList.add("hidden");
 
 
-    /* ============================================================
+  }catch (error){
+    console.error(error);
+    hideLoading();
+    resultCard.classList.remove("Couldn't find");
+
+  }
+
+}
+
+
+
+
+/* ============================================================
        TEAM BUILD STARTS HERE
        The instructor demo stops at Step 6. Steps 7-10 are your
        team's mission. Use the exact pattern from Step 6 above.
        ============================================================ */
 
-    /* ------------------------------------------------------------
+/* ------------------------------------------------------------
        STEP 7: Display the Flag
        ------------------------------------------------------------
        TODO:
@@ -47,8 +98,7 @@ const languagesEl = document.getElementById("languagesValue");
        flagImg.alt = ???
        ------------------------------------------------------------ */
 
-
-    /* ------------------------------------------------------------
+/* ------------------------------------------------------------
        STEP 8: Display Capital, Region, Population
        ------------------------------------------------------------
        TODO:
@@ -64,8 +114,7 @@ const languagesEl = document.getElementById("languagesValue");
        populationEl.textContent = ???
        ------------------------------------------------------------ */
 
-
-    /* ------------------------------------------------------------
+/* ------------------------------------------------------------
        STEP 9: Display Languages
        ------------------------------------------------------------
        TODO:
@@ -79,8 +128,7 @@ const languagesEl = document.getElementById("languagesValue");
        languagesEl.textContent = ???
        ------------------------------------------------------------ */
 
-
-    /* ------------------------------------------------------------
+/* ------------------------------------------------------------
        STEP 10a: Improve the experience — clean up on SUCCESS
        ------------------------------------------------------------
        TODO:
@@ -89,10 +137,7 @@ const languagesEl = document.getElementById("languagesValue");
        - Make sure old errors are gone: errorEl.classList.add('hidden');
        ------------------------------------------------------------ */
 
-
-  } catch (error) {
-
-    /* ------------------------------------------------------------
+/* ------------------------------------------------------------
        STEP 10b: Improve the experience — error handling
        ------------------------------------------------------------
        TODO:
@@ -103,21 +148,16 @@ const languagesEl = document.getElementById("languagesValue");
              `We couldn't find "${countryName}". Check the spelling and try again.`;
            errorEl.classList.remove('hidden');
        ------------------------------------------------------------ */
-    console.error(error);
-
-  }
-}
-
 
 /* ------------------------------------------------------------
    Helper functions — already built for you.
    ------------------------------------------------------------ */
 function showLoading() {
-  loadingEl.classList.remove('hidden');
-  errorEl.classList.add('hidden');
-  resultCard.classList.add('hidden');
+  loadingEl.classList.remove("hidden");
+  errorEl.classList.add("hidden");
+  resultCard.classList.add("hidden");
 }
 
 function hideLoading() {
-  loadingEl.classList.add('hidden');
+  loadingEl.classList.add("hidden");
 }
